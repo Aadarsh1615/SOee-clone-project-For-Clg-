@@ -1,0 +1,6 @@
+﻿C:\Program Files (x86)\IIS Express> "C:\projects\SOEEApp-main\SOEEApp\bin\roslyn\csc.exe" /shared /keepalive:"10" /noconfig  /fullpaths @"C:\projects\SOEEApp-main\SOEEApp\AspNetTemp\vs\373bff4a\cdc8e753\2414n5zh.cmdline"
+
+
+Microsoft (R) Visual C# Compiler version 1.0.0.50618
+Copyright (C) Microsoft Corporation. All rights reserved.
+

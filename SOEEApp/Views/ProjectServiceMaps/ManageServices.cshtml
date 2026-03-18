@@ -1,0 +1,47 @@
+﻿@model SOEEApp.Models.ManageServicesViewModel
+
+<h2>Manage Services for Project: @Model.Project.Name</h2>
+
+<hr />
+
+<h3>Add Service</h3>
+<form method="post" action="@Url.Action("AddService")">
+    <input type="hidden" name="projectId" value="@Model.Project.ProjectID" />
+
+    <select class="form-control" name="serviceTypeID">
+        <option value="">-- Select Service --</option>
+        @foreach (var s in Model.AllServices)
+        {
+            <option value="@s.ServiceTypeID">@s.ServiceName</option>
+        }
+    </select>
+
+    <br />
+    <button class="btn btn-primary">Add</button>
+</form>
+
+<hr />
+
+<h3>Services Already Added</h3>
+
+<table class="table table-bordered">
+    <tr>
+        <th>Service</th>
+        <th>Added On</th>
+        <th>Action</th>
+    </tr>
+
+    @foreach (var item in Model.ExistingServices)
+    {
+        <tr>
+            <td>@item.ServiceType.ServiceName</td>
+            <td>@item.AddedOn.ToString("dd-MM-yyyy")</td>
+            <td>
+                <a class="btn btn-danger btn-sm"
+                   href="@Url.Action("Remove", new { id = item.ProjServMapID, projectId = Model.Project.ProjectID })">
+                    Remove
+                </a>
+            </td>
+        </tr>
+    }
+</table>

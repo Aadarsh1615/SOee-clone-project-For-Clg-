@@ -1,0 +1,28 @@
+@model SOEEApp.Models.Customer
+
+@{
+    ViewBag.Title = "Delete Customer";
+}
+
+<h2>Delete Customer</h2>
+
+<div class="card card-body shadow-sm">
+    <p>Delete <strong>@Model.CustomerName</strong>?</p>
+    <dl class="row">
+        <dt class="col-sm-3">Email</dt>
+        <dd class="col-sm-9">@Model.Email</dd>
+        <dt class="col-sm-3">Contact Person</dt>
+        <dd class="col-sm-9">@Model.ContactPerson</dd>
+        <dt class="col-sm-3">Phone</dt>
+        <dd class="col-sm-9">@Model.PhoneNumber</dd>
+    </dl>
+
+    @using (Html.BeginForm())
+    {
+        @Html.AntiForgeryToken()
+        <div class="d-flex gap-2">
+            <button class="btn btn-danger" type="submit">Delete</button>
+            <a href="@Url.Action("Index")" class="btn btn-outline-secondary">Cancel</a>
+        </div>
+    }
+</div>

@@ -1,0 +1,169 @@
+@model SOEEApp.Models.ViewModels.ReportsDashboardViewModel
+
+@{
+    ViewBag.Title = "Reports";
+}
+
+<div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-3">
+    <div>
+        <h2 class="mb-1">Reports Dashboard</h2>
+        <p class="text-muted mb-0">Summary, quarterly, reconciliation, closure and audit exports for SOEE operations.</p>
+    </div>
+    <div class="d-flex gap-2 flex-wrap">
+        <a href="@Url.Action("Export", new { type = "summary" })" class="btn btn-outline-success">Summary Excel</a>
+        <a href="@Url.Action("Export", new { type = "quarterly" })" class="btn btn-outline-success">Quarterly Excel</a>
+        <a href="@Url.Action("Export", new { type = "reconciliation" })" class="btn btn-outline-success">Reconciliation Excel</a>
+        <a href="@Url.Action("Export", new { type = "pending" })" class="btn btn-outline-success">Pending Closure Excel</a>
+        <a href="@Url.Action("Export", new { type = "audit" })" class="btn btn-outline-success">Audit Excel</a>
+    </div>
+</div>
+
+<div class="card card-body shadow-sm mb-3">
+    <h4>SOEE Summary Report</h4>
+    <table class="table table-bordered mb-0">
+        <thead>
+            <tr>
+                <th>Project</th>
+                <th>Client</th>
+                <th>SOEE Count</th>
+                <th>Total Amount</th>
+                <th>Total Received</th>
+                <th>Outstanding</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var row in Model.SummaryRows)
+            {
+                <tr>
+                    <td>@row.ProjectName</td>
+                    <td>@row.ClientName</td>
+                    <td>@row.SOEECount</td>
+                    <td>@row.TotalAmount.ToString("N2")</td>
+                    <td>@row.TotalReceived.ToString("N2")</td>
+                    <td>@row.OutstandingAmount.ToString("N2")</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+<div class="row g-3 mb-3">
+    <div class="col-lg-6">
+        <div class="card card-body shadow-sm h-100">
+            <h4>Quarterly SOEE Report</h4>
+            <table class="table table-bordered mb-0">
+                <thead>
+                    <tr>
+                        <th>Quarter</th>
+                        <th>Count</th>
+                        <th>Total</th>
+                        <th>Received</th>
+                        <th>Pending</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var row in Model.QuarterlyRows)
+                    {
+                        <tr>
+                            <td>@row.QuarterLabel</td>
+                            <td>@row.SOEECount</td>
+                            <td>@row.TotalAmount.ToString("N2")</td>
+                            <td>@row.TotalReceived.ToString("N2")</td>
+                            <td>@row.PendingAmount.ToString("N2")</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="col-lg-6">
+        <div class="card card-body shadow-sm h-100">
+            <h4>Pending Closure Report</h4>
+            <table class="table table-bordered mb-0">
+                <thead>
+                    <tr>
+                        <th>SOEE</th>
+                        <th>Project</th>
+                        <th>Status</th>
+                        <th>Created</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var row in Model.PendingClosureRows)
+                    {
+                        <tr>
+                            <td>@row.SOEEID</td>
+                            <td>@row.ProjectName</td>
+                            <td>@row.Status</td>
+                            <td>@row.CreatedDate.ToString("dd-MMM-yyyy")</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<div class="card card-body shadow-sm mb-3">
+    <h4>Payment Reconciliation Report</h4>
+    <table class="table table-bordered mb-0">
+        <thead>
+            <tr>
+                <th>SOEE</th>
+                <th>Project</th>
+                <th>Client</th>
+                <th>Total</th>
+                <th>Received</th>
+                <th>Voucher</th>
+                <th>Voucher Status</th>
+                <th>SOEE Status</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var row in Model.ReconciliationRows)
+            {
+                <tr>
+                    <td>@row.SOEEID</td>
+                    <td>@row.ProjectName</td>
+                    <td>@row.CustomerName</td>
+                    <td>@row.GrandTotal.ToString("N2")</td>
+                    <td>@row.TotalReceived.ToString("N2")</td>
+                    <td>@row.VoucherNumber</td>
+                    <td>@row.VoucherStatus</td>
+                    <td>@row.SOEEStatus</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+<div class="card card-body shadow-sm">
+    <h4>Role-Based Audit Log</h4>
+    <table class="table table-bordered mb-0">
+        <thead>
+            <tr>
+                <th>SOEE</th>
+                <th>Project</th>
+                <th>Action By</th>
+                <th>Role Hint</th>
+                <th>Transition</th>
+                <th>Remarks</th>
+                <th>Action On</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var row in Model.AuditRows.Take(100))
+            {
+                <tr>
+                    <td>@row.SOEEID</td>
+                    <td>@row.ProjectName</td>
+                    <td>@row.ActionBy</td>
+                    <td>@row.RoleHint</td>
+                    <td>@row.Transition</td>
+                    <td>@row.Remarks</td>
+                    <td>@row.ActionOn.ToString("dd-MMM-yyyy HH:mm")</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

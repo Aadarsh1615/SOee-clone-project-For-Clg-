@@ -1,0 +1,46 @@
+﻿@model IEnumerable<SOEEApp.Models.Project>
+
+<div class="row mb-4 align-items-center">
+    <div class="col">
+        <h2 class="mb-0">Projects</h2>
+    </div>
+    <div class="col-auto">
+        <a class="btn btn-primary" href="@Url.Action("Create")">Add Project</a>
+    </div>
+</div>
+
+<div class="card shadow-sm">
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead class="bg-light">
+                    <tr>
+                        <th class="ps-4">Project Name</th>
+                        <th>Project Cost</th>
+                        <th>OIC</th>
+                        <th>Status</th>
+                        <th class="text-end pe-4">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var p in Model)
+                    {
+                        <tr>
+                            <td class="ps-4">@p.Name</td>
+                            <td>@p.ProjectCost.ToString("N2")</td>
+                            <td>@(p.OICUser != null ? p.OICUser.Name ?? p.OICUser.UserName : "")</td>
+                            <td>
+                                <span class="badge bg-light text-dark border">@p.Status</span>
+                            </td>
+                            <td class="text-end pe-4">
+                                <a class="btn btn-sm btn-outline-primary me-1" href="@Url.Action("Edit", new { id = p.ProjectID })">Edit</a>
+                                <a class="btn btn-sm btn-outline-secondary me-1" href="@Url.Action("ManageServices", "ProjectServiceMapS", new { projectId = p.ProjectID })">Services</a>
+                                <a class="btn btn-sm btn-outline-danger" href="@Url.Action("Delete", new { id = p.ProjectID })">Delete</a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

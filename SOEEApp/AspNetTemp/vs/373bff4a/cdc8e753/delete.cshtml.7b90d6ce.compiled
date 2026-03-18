@@ -1,0 +1,6 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<preserve resultType="2" virtualPath="/Views/ServiceCostSlabs/Delete.cshtml" hash="1626a5ce" filehash="ffffbed04d314d51" flags="110000" assembly="App_Web_xvpcyjak" type="ASP._Page_Views_ServiceCostSlabs_Delete_cshtml">
+    <filedeps>
+        <filedep name="/Views/ServiceCostSlabs/Delete.cshtml" />
+    </filedeps>
+</preserve>

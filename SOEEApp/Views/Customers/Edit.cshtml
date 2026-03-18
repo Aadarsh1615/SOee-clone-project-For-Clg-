@@ -1,0 +1,39 @@
+@model SOEEApp.Models.Customer
+
+@{
+    ViewBag.Title = "Edit Customer";
+}
+
+<h2>Edit Customer</h2>
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    @Html.HiddenFor(m => m.CustomerID)
+
+    <div class="card card-body shadow-sm">
+        <div class="row g-3">
+            <div class="col-md-6">
+                @Html.LabelFor(m => m.CustomerName)
+                @Html.TextBoxFor(m => m.CustomerName, new { @class = "form-control" })
+            </div>
+            <div class="col-md-6">
+                @Html.LabelFor(m => m.Email)
+                @Html.TextBoxFor(m => m.Email, new { @class = "form-control", type = "email" })
+            </div>
+            <div class="col-md-6">
+                @Html.LabelFor(m => m.ContactPerson)
+                @Html.TextBoxFor(m => m.ContactPerson, new { @class = "form-control" })
+            </div>
+            <div class="col-md-6">
+                @Html.LabelFor(m => m.PhoneNumber)
+                @Html.TextBoxFor(m => m.PhoneNumber, new { @class = "form-control" })
+            </div>
+        </div>
+
+        <div class="d-flex gap-2 mt-3">
+            <button class="btn btn-primary" type="submit">Save</button>
+            <a href="@Url.Action("Index")" class="btn btn-outline-secondary">Cancel</a>
+        </div>
+    </div>
+}

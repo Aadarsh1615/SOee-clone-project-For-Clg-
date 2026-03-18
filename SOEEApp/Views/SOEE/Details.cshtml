@@ -1,0 +1,283 @@
+@using SOEEApp.Models
+@model SOEEApp.Models.ViewModels.SOEECreateViewModel
+
+@{
+    ViewBag.Title = "SOEE Details";
+    var received = Model.Payments.Sum(p => p.AmountReceived);
+    var outstanding = Model.GrandTotal - received;
+}
+
+<div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-3">
+    <div>
+        <h2 class="mb-1">SOEE #@Model.SOEEID</h2>
+        <p class="text-muted mb-0">Workflow details, payment history, receipt voucher and audit trail.</p>
+    </div>
+    <div class="d-flex gap-2 flex-wrap">
+        <a href="@Url.Action("Print", new { id = Model.SOEEID })" target="_blank" class="btn btn-outline-dark">Print / PDF</a>
+        @if (User.IsInRole("OIC") && Model.Status != SOEEStatus.Draft && Model.Status != SOEEStatus.Closed)
+        {
+            <a href="@Url.Action("Record", "Payments", new { soeeId = Model.SOEEID })" class="btn btn-outline-primary">Record Payment</a>
+        }
+        @if (User.IsInRole("Cashier") && (Model.Status == SOEEStatus.PartiallyPaid || Model.Status == SOEEStatus.FullyPaid || Model.Status == SOEEStatus.ErrorInPayment))
+        {
+            <a href="@Url.Action("Reconcile", "Payments", new { soeeId = Model.SOEEID })" class="btn btn-primary">Reconcile</a>
+        }
+        <a href="@Url.Action("Index")" class="btn btn-outline-secondary">Back</a>
+    </div>
+</div>
+
+<div class="row g-3 mb-3">
+    <div class="col-md-8">
+        <div class="card card-body shadow-sm h-100">
+            <div class="row g-3">
+                <div class="col-md-4"><strong>Project</strong><div>@(Model.Project != null ? Model.Project.Name : "")</div></div>
+                <div class="col-md-4"><strong>Customer</strong><div>@(Model.Customer != null ? Model.Customer.CustomerName : "")</div></div>
+                <div class="col-md-4"><strong>Status</strong><div><span class="badge bg-secondary">@Model.Status</span></div></div>
+                <div class="col-md-4"><strong>Reference No.</strong><div>@Model.ReferenceNo</div></div>
+                <div class="col-md-4"><strong>Raised Date</strong><div>@Model.SOEERaiseDate.ToString("dd-MMM-yyyy")</div></div>
+                <div class="col-md-4"><strong>Mark To</strong><div>@Model.MarkTo</div></div>
+                <div class="col-md-6"><strong>Subject</strong><div>@Model.Subject</div></div>
+                <div class="col-md-6"><strong>Reference</strong><div>@Model.Reference</div></div>
+                <div class="col-md-12"><strong>Content</strong><div>@Model.Content</div></div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card card-body shadow-sm h-100">
+            <h5>Workflow Flags</h5>
+            <div><strong>Previous SOEE:</strong> @(Model.PrevSOEEID.HasValue ? Model.PrevSOEEID.ToString() : "N/A")</div>
+            <div><strong>Previous Balance:</strong> @Model.PreviousSOEEBalance.ToString("N2")</div>
+            <div><strong>E-Signed:</strong> @(Model.IsESigned ? "Yes" : "No")</div>
+            <div><strong>E-Signed By:</strong> @Model.ESignedBy</div>
+            <div><strong>E-Signed On:</strong> @(Model.ESignedOn.HasValue ? Model.ESignedOn.Value.ToString("dd-MMM-yyyy HH:mm") : "-")</div>
+            <div><strong>Dispatch Email:</strong> @Model.DispatchEmail</div>
+            <div><strong>Dispatched By:</strong> @Model.DispatchedBy</div>
+            <div><strong>Dispatched On:</strong> @(Model.DispatchedOn.HasValue ? Model.DispatchedOn.Value.ToString("dd-MMM-yyyy HH:mm") : "-")</div>
+            <div><strong>Closure Remarks:</strong> @Model.ClosureRemarks</div>
+        </div>
+    </div>
+</div>
+
+<div class="card card-body shadow-sm mb-3">
+    <h4>Service Items</h4>
+    <div class="table-responsive">
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>Description</th>
+                    <th>Service Type</th>
+                    <th>Unit</th>
+                    <th>Quantity</th>
+                    <th>Unit Price</th>
+                    <th>Subtotal</th>
+                    <th>Service %</th>
+                    <th>Service Charge</th>
+                    <th>CGST</th>
+                    <th>SGST</th>
+                    <th>Total</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model.Items)
+                {
+                    <tr>
+                        <td>@item.DescriptionOfWork</td>
+                        <td>@item.ServiceTypeName</td>
+                        <td>@item.Unit</td>
+                        <td>@item.Quantity</td>
+                        <td>@item.UnitPrice.ToString("N2")</td>
+                        <td>@item.SubTotal.ToString("N2")</td>
+                        <td>@item.ServiceChargePercent.ToString("N2")</td>
+                        <td>@item.ServiceCharge.ToString("N2")</td>
+                        <td>@item.CGST.ToString("N2")</td>
+                        <td>@item.SGST.ToString("N2")</td>
+                        <td>@item.Total.ToString("N2")</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<div class="row g-3 mb-3">
+    <div class="col-md-3">
+        <div class="card card-body shadow-sm"><strong>Total Basic</strong><span>@Model.TotalBasicAmount.ToString("N2")</span></div>
+    </div>
+    <div class="col-md-3">
+        <div class="card card-body shadow-sm"><strong>Total Service Charges</strong><span>@Model.TotalServiceCharge.ToString("N2")</span></div>
+    </div>
+    <div class="col-md-3">
+        <div class="card card-body shadow-sm"><strong>Total Tax</strong><span>@Model.TotalTaxAmount.ToString("N2")</span></div>
+    </div>
+    <div class="col-md-3">
+        <div class="card card-body shadow-sm"><strong>Grand Total</strong><span>@Model.GrandTotal.ToString("N2")</span></div>
+    </div>
+</div>
+
+<div class="row g-3 mb-3">
+    <div class="col-md-6">
+        <div class="card card-body shadow-sm h-100">
+            <div class="d-flex justify-content-between align-items-center mb-2">
+                <h4 class="mb-0">Payments</h4>
+                <span class="badge bg-light text-dark">Received @received.ToString("N2") / Outstanding @outstanding.ToString("N2")</span>
+            </div>
+            @if (Model.Payments.Any())
+            {
+                <div class="table-responsive">
+                    <table class="table table-sm table-bordered">
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>UTR</th>
+                                <th>Mode</th>
+                                <th>Amount</th>
+                                <th>Reconciled</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var payment in Model.Payments)
+                            {
+                                <tr>
+                                    <td>@payment.PaymentDate.ToString("dd-MMM-yyyy")</td>
+                                    <td>@payment.UTRNo</td>
+                                    <td>@payment.Mode</td>
+                                    <td>@payment.AmountReceived.ToString("N2")</td>
+                                    <td>@(payment.IsReconciled ? "Yes" : "No")</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            }
+            else
+            {
+                <p class="text-muted mb-0">No payment entries recorded yet.</p>
+            }
+        </div>
+    </div>
+
+    <div class="col-md-6">
+        <div class="card card-body shadow-sm h-100">
+            <h4>Receipt Voucher</h4>
+            @if (Model.ReceiptVoucher != null)
+            {
+                <div><strong>Voucher No.:</strong> @Model.ReceiptVoucher.VoucherNumber</div>
+                <div><strong>Voucher Date:</strong> @Model.ReceiptVoucher.VoucherDate.ToString("dd-MMM-yyyy")</div>
+                <div><strong>Amount:</strong> @Model.ReceiptVoucher.Amount.ToString("N2")</div>
+                <div><strong>Status:</strong> @Model.ReceiptVoucher.Status</div>
+                <div><strong>Generated By:</strong> @Model.ReceiptVoucher.GeneratedBy</div>
+                <div><strong>Generated On:</strong> @Model.ReceiptVoucher.GeneratedOn.ToString("dd-MMM-yyyy HH:mm")</div>
+                <div><strong>Remarks:</strong> @Model.ReceiptVoucher.Remarks</div>
+                <div class="mt-2">
+                    <a href="@Url.Action("Voucher", "Payments", new { soeeId = Model.SOEEID })" class="btn btn-sm btn-outline-dark" target="_blank">Print Voucher</a>
+                </div>
+            }
+            else
+            {
+                <p class="text-muted mb-0">Voucher will be generated during payment recording/reconciliation.</p>
+            }
+        </div>
+    </div>
+</div>
+
+<div class="card card-body shadow-sm mb-3">
+    <h4>Actions</h4>
+    <div class="d-flex gap-2 flex-wrap">
+        @if (User.IsInRole("OIC") && (Model.Status == SOEEStatus.Draft || Model.Status == SOEEStatus.NeedCorrection))
+        {
+            <a href="@Url.Action("Edit", new { id = Model.SOEEID })" class="btn btn-primary">Edit</a>
+            using (Html.BeginForm("Submit", "SOEE", FormMethod.Post))
+            {
+                @Html.AntiForgeryToken()
+                @Html.Hidden("id", Model.SOEEID)
+                <button type="submit" class="btn btn-success">Submit</button>
+            }
+        }
+
+        @if (User.IsInRole("FinanceManager") && Model.Status == SOEEStatus.Submitted)
+        {
+            using (Html.BeginForm("ApproveByFM", "SOEE", FormMethod.Post))
+            {
+                @Html.AntiForgeryToken()
+                @Html.Hidden("id", Model.SOEEID)
+                <button type="submit" class="btn btn-primary">Approve & E-Sign</button>
+            }
+            using (Html.BeginForm("NeedCorrectionByFM", "SOEE", FormMethod.Post))
+            {
+                @Html.AntiForgeryToken()
+                @Html.Hidden("id", Model.SOEEID)
+                <button type="submit" class="btn btn-warning">Need Correction</button>
+            }
+        }
+
+        @if (User.IsInRole("FinanceDirector") && Model.Status == SOEEStatus.Approved)
+        {
+            using (Html.BeginForm("ApproveByFD", "SOEE", FormMethod.Post))
+            {
+                @Html.AntiForgeryToken()
+                @Html.Hidden("id", Model.SOEEID)
+                <button type="submit" class="btn btn-success">Dispatch To Client</button>
+            }
+        }
+
+        @if (User.IsInRole("Client") && (Model.Status == SOEEStatus.Dispatched || Model.Status == SOEEStatus.ErrorInPayment))
+        {
+            using (Html.BeginForm("MarkPartiallyPaid", "SOEE", FormMethod.Post))
+            {
+                @Html.AntiForgeryToken()
+                @Html.Hidden("id", Model.SOEEID)
+                <button type="submit" class="btn btn-warning">Partial Payment Confirmed</button>
+            }
+            using (Html.BeginForm("MarkFullyPaid", "SOEE", FormMethod.Post))
+            {
+                @Html.AntiForgeryToken()
+                @Html.Hidden("id", Model.SOEEID)
+                <button type="submit" class="btn btn-success">Full Payment Confirmed</button>
+            }
+        }
+
+        @if (User.IsInRole("Cashier") && (Model.Status == SOEEStatus.PartiallyPaid || Model.Status == SOEEStatus.FullyPaid || Model.Status == SOEEStatus.ErrorInPayment))
+        {
+            <a href="@Url.Action("Reconcile", "Payments", new { soeeId = Model.SOEEID })" class="btn btn-primary">Reconcile & Generate Voucher</a>
+        }
+
+        @if (User.IsInRole("OIC") && Model.Status == SOEEStatus.Reconciled)
+        {
+            using (Html.BeginForm("CloseSOEE", "SOEE", FormMethod.Post))
+            {
+                @Html.AntiForgeryToken()
+                @Html.Hidden("id", Model.SOEEID)
+                <button type="submit" class="btn btn-dark">Close SOEE</button>
+            }
+        }
+    </div>
+</div>
+
+<div class="card card-body shadow-sm">
+    <h4>Status History</h4>
+    <div class="table-responsive">
+        <table class="table table-bordered mb-0">
+            <thead>
+                <tr>
+                    <th>From</th>
+                    <th>To</th>
+                    <th>By</th>
+                    <th>Date</th>
+                    <th>Remarks</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var h in Model.Activities.OrderByDescending(x => x.ActionOn))
+                {
+                    <tr>
+                        <td>@h.OldStatus</td>
+                        <td>@h.NewStatus</td>
+                        <td>@h.ActionBy</td>
+                        <td>@h.ActionOn.ToString("dd-MMM-yyyy HH:mm")</td>
+                        <td>@h.Remarks</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

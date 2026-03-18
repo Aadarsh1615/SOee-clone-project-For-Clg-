@@ -1,0 +1,55 @@
+@model SOEEApp.Models.Project
+
+@{
+    ViewBag.Title = "Edit Project";
+}
+
+<div class="row justify-content-center mt-5">
+    <div class="col-md-6 col-lg-5">
+        <div class="card shadow-sm border-0">
+            <div class="card-header bg-white">
+                <h4 class="mb-0 text-primary">Edit Project</h4>
+            </div>
+            <div class="card-body p-4">
+                @using (Html.BeginForm())
+                {
+                    @Html.AntiForgeryToken()
+                    @Html.HiddenFor(model => model.ProjectID)
+
+                    <div class="mb-3">
+                        @Html.LabelFor(m => m.Name, new { @class = "form-label" })
+                        @Html.TextBoxFor(m => m.Name, new { @class = "form-control" })
+                        @Html.ValidationMessageFor(m => m.Name, "", new { @class = "text-danger small" })
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">OIC User</label>
+                        @Html.DropDownList("OICUserId", null, "Select OIC", new { @class = "form-select" })
+                        @Html.ValidationMessageFor(m => m.OICUserId, "", new { @class = "text-danger small" })
+                    </div>
+
+                    <div class="mb-3">
+                        @Html.LabelFor(m => m.ProjectCost, new { @class = "form-label" })
+                        @Html.TextBoxFor(m => m.ProjectCost, new { @class = "form-control", type = "number", step = "0.01", min = "0" })
+                        @Html.ValidationMessageFor(m => m.ProjectCost, "", new { @class = "text-danger small" })
+                    </div>
+                    
+                    <div class="mb-3">
+                        @Html.LabelFor(m => m.Status, new { @class = "form-label" })
+                        @Html.TextBoxFor(m => m.Status, new { @class = "form-control" })
+                        @Html.ValidationMessageFor(m => m.Status, "", new { @class = "text-danger small" })
+                    </div>
+
+                    <div class="d-grid gap-2 mt-4">
+                        <input type="submit" value="Save Changes" class="btn btn-primary" />
+                        @Html.ActionLink("Cancel", "Index", null, new { @class = "btn btn-light text-secondary" })
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+}

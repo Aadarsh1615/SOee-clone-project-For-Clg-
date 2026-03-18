@@ -1,0 +1,61 @@
+@model IEnumerable<SOEEApp.Models.ViewModels.PaymentQueueRowViewModel>
+
+@{
+    ViewBag.Title = "Payments";
+}
+
+<div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-3">
+    <div>
+        <h2 class="mb-1">Payment Queue</h2>
+        <p class="text-muted mb-0">OIC payment entries, cashier reconciliation and receipt voucher tracking.</p>
+    </div>
+    <a href="@Url.Action("Index", "Reports")" class="btn btn-outline-secondary">Reports</a>
+</div>
+
+<div class="card shadow-sm">
+    <div class="table-responsive">
+        <table class="table table-hover align-middle mb-0">
+            <thead class="table-light">
+                <tr>
+                    <th>SOEE</th>
+                    <th>Project</th>
+                    <th>Customer</th>
+                    <th>Grand Total</th>
+                    <th>Received</th>
+                    <th>Outstanding</th>
+                    <th>Status</th>
+                    <th>Voucher</th>
+                    <th class="text-end">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var row in Model)
+                {
+                    <tr>
+                        <td>@row.SOEEID</td>
+                        <td>@row.ProjectName</td>
+                        <td>@row.CustomerName</td>
+                        <td>@row.GrandTotal.ToString("N2")</td>
+                        <td>@row.TotalReceived.ToString("N2")</td>
+                        <td>@row.OutstandingAmount.ToString("N2")</td>
+                        <td>@row.Status</td>
+                        <td>@(string.IsNullOrWhiteSpace(row.VoucherNumber) ? "Not Created" : row.VoucherNumber + " (" + row.VoucherStatus + ")")</td>
+                        <td class="text-end">
+                            <div class="d-flex justify-content-end gap-2 flex-wrap">
+                                @if (User.IsInRole("OIC"))
+                                {
+                                    <a href="@Url.Action("Record", new { soeeId = row.SOEEID })" class="btn btn-sm btn-outline-primary">Record</a>
+                                }
+                                @if (User.IsInRole("Cashier"))
+                                {
+                                    <a href="@Url.Action("Reconcile", new { soeeId = row.SOEEID })" class="btn btn-sm btn-primary">Reconcile</a>
+                                }
+                                <a href="@Url.Action("Details", "SOEE", new { id = row.SOEEID })" class="btn btn-sm btn-outline-dark">SOEE</a>
+                            </div>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

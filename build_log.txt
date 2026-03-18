@@ -1,0 +1,24 @@
+Microsoft (R) Build Engine version 4.8.9221.0
+[Microsoft .NET Framework, version 4.0.30319.42000]
+Copyright (C) Microsoft Corporation. All rights reserved.
+
+Building the projects in this solution one at a time. To enable parallel build, please add the "/m" switch.
+Build started 1/20/2026 10:56:29 AM.
+Project "C:\Users\hp\OneDrive\Desktop\SOEEApp-main (1)\SOEEApp-main\SOEEApp.sln" on node 1 (default targets).
+ValidateSolutionConfiguration:
+  Building solution configuration "Debug|Any CPU".
+Project "C:\Users\hp\OneDrive\Desktop\SOEEApp-main (1)\SOEEApp-main\SOEEApp.sln" (1) is building "C:\Users\hp\OneDrive\Desktop\SOEEApp-main (1)\SOEEApp-main\SOEEApp\SOEEApp.csproj" (2) on node 1 (default targets).
+C:\Users\hp\OneDrive\Desktop\SOEEApp-main (1)\SOEEApp-main\SOEEApp\SOEEApp.csproj(385,3): error MSB4019: The imported project "C:\Program Files (x86)\MSBuild\Microsoft\VisualStudio\v11.0\WebApplications\Microsoft.WebApplication.targets" was not found. Confirm that the path in the <Import> declaration is correct, and that the file exists on disk.
+Done Building Project "C:\Users\hp\OneDrive\Desktop\SOEEApp-main (1)\SOEEApp-main\SOEEApp\SOEEApp.csproj" (default targets) -- FAILED.
+Done Building Project "C:\Users\hp\OneDrive\Desktop\SOEEApp-main (1)\SOEEApp-main\SOEEApp.sln" (default targets) -- FAILED.
+
+Build FAILED.
+
+"C:\Users\hp\OneDrive\Desktop\SOEEApp-main (1)\SOEEApp-main\SOEEApp.sln" (default target) (1) ->
+"C:\Users\hp\OneDrive\Desktop\SOEEApp-main (1)\SOEEApp-main\SOEEApp\SOEEApp.csproj" (default target) (2) ->
+  C:\Users\hp\OneDrive\Desktop\SOEEApp-main (1)\SOEEApp-main\SOEEApp\SOEEApp.csproj(385,3): error MSB4019: The imported project "C:\Program Files (x86)\MSBuild\Microsoft\VisualStudio\v11.0\WebApplications\Microsoft.WebApplication.targets" was not found. Confirm that the path in the <Import> declaration is correct, and that the file exists on disk.
+
+    0 Warning(s)
+    1 Error(s)
+
+Time Elapsed 00:00:00.27

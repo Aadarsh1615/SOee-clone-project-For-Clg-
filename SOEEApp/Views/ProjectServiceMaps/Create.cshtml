@@ -1,0 +1,67 @@
+﻿@model SOEEApp.Models.ProjectServiceMap
+@{
+    ViewBag.Title = "Create Project-Service Mapping";
+}
+
+<h2>Create Project-Service Mapping</h2>
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    <div class="form-group">
+        @Html.LabelFor(m => m.ProjectID)
+        @Html.DropDownListFor(m => m.ProjectID, (SelectList)ViewBag.Projects, "Select Project", new { @class = "form-control" })
+    </div>
+    <div class="form-group">
+        @Html.LabelFor(m => m.ServiceTypeID)
+        @Html.DropDownListFor(m => m.ServiceTypeID, (SelectList)ViewBag.ServiceTypes, "Select Service", new { @class = "form-control", id = "serviceTypeSelect" })
+    </div>
+    <div class="form-group">
+        <label for="slabSelect">Slab Range</label>
+        <select id="slabSelect" name="slabId" class="form-control">
+            <option value="">Select Slab</option>
+            @foreach (var slab in (List<SelectListItem>)ViewBag.Slabs)
+            {
+                <option value="@slab.Value">@slab.Text</option>
+            }
+        </select>
+    </div>
+    <div class="form-group">
+        <label>Service Charge %</label>
+        <input id="serviceCharge" class="form-control" readonly value="-" />
+    </div>
+    <div class="form-group">
+        @Html.LabelFor(m => m.AddedOn)
+        @Html.TextBoxFor(m => m.AddedOn, "{0:yyyy-MM-dd}", new { @class = "form-control", type = "date" })
+    </div>
+    <script>
+        function updateCharge() {
+            var serviceTypeId = document.getElementById('serviceTypeSelect').value;
+            var slabId = document.getElementById('slabSelect').value;
+            var chargeInput = document.getElementById('serviceCharge');
+            if (!serviceTypeId || !slabId) {
+                chargeInput.value = '-';
+                return;
+            }
+
+            $.getJSON('@Url.Action("GetServiceChargeBySlab", "ServiceTypeSlabMaps")', { serviceTypeId: serviceTypeId, slabId: slabId })
+                .done(function (data) {
+                    if (data.success) {
+                        chargeInput.value = data.percentage + ' %';
+                    } else {
+                        chargeInput.value = 'Not mapped';
+                    }
+                })
+                .fail(function () {
+                    chargeInput.value = 'Error';
+                });
+        }
+
+        document.addEventListener('DOMContentLoaded', function () {
+            document.getElementById('serviceTypeSelect').addEventListener('change', updateCharge);
+            document.getElementById('slabSelect').addEventListener('change', updateCharge);
+        });
+    </script>
+    <button type="submit" class="btn btn-success">Save</button>
+    @Html.ActionLink("Back to List", "Index", null, new { @class = "btn btn-default" })
+}

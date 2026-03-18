@@ -1,0 +1,52 @@
+﻿@model IEnumerable<SOEEApp.Models.ServiceCostSlab>
+
+@{
+    ViewBag.Title = "Slab List";
+}
+
+<div class="row mb-4 align-items-center">
+    <div class="col">
+        <h2 class="mb-0">Service Cost Slabs</h2>
+    </div>
+    <div class="col-auto">
+        @Html.ActionLink("Create New Slab", "Create", null, new { @class = "btn btn-primary" })
+    </div>
+</div>
+
+<div class="card shadow-sm">
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle">
+                <thead class="bg-light">
+                    <tr>
+                        <th class="ps-4">Amount From</th>
+                        <th>Amount To</th>
+                        <th class="text-end pe-4">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <td class="ps-4">@String.Format("{0:N2}", item.MinAmount)</td>
+                            <td>
+                                @if (item.MaxAmount.HasValue)
+                                {
+                                    @String.Format("{0:N2}", item.MaxAmount)
+                                }
+                                else
+                                {
+                                    <span class="badge bg-secondary">Unlimited</span>
+                                }
+                            </td>
+                            <td class="text-end pe-4">
+                                @Html.ActionLink("Edit", "Edit", new { id = item.Id }, new { @class = "btn btn-sm btn-outline-primary me-1" })
+                                @Html.ActionLink("Delete", "Delete", new { id = item.Id }, new { @class = "btn btn-sm btn-outline-danger" })
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

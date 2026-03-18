@@ -1,0 +1,13 @@
+﻿@model SOEEApp.Models.SOEE
+
+<h2>SOEE Created Successfully!</h2>
+
+<p><strong>ID:</strong> @Model.Id</p>
+<p><strong>Title:</strong> @Model.Title</p>
+<p><strong>Description:</strong> @Model.Description</p>
+<p><strong>Created:</strong> @Model.CreatedAt</p>
+
+<p>
+    @Html.ActionLink("Create Another", "Create") |
+    @Html.ActionLink("Go Home", "Index", "Home")
+</p>

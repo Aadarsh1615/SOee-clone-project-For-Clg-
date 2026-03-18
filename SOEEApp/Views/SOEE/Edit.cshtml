@@ -1,0 +1,272 @@
+@model SOEEApp.Models.ViewModels.SOEECreateViewModel
+
+@{
+    ViewBag.Title = "Edit SOEE";
+    var serviceTypes = ViewBag.ServiceTypes as List<SOEEApp.Models.ServiceType> ?? new List<SOEEApp.Models.ServiceType>();
+}
+
+<h2>Edit SOEE</h2>
+
+@using (Html.BeginForm("Edit", "SOEE", FormMethod.Post))
+{
+    @Html.AntiForgeryToken()
+    @Html.HiddenFor(m => m.SOEEID)
+    @Html.HiddenFor(m => m.Status)
+    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+
+    <div class="card card-body shadow-sm mb-3">
+        <div class="alert alert-info">
+            Previous SOEE ID: <strong>@(Model.PrevSOEEID.HasValue ? Model.PrevSOEEID.ToString() : "Not available")</strong>
+            |
+            Previous Balance: <strong>@Model.PreviousSOEEBalance.ToString("N2")</strong>
+        </div>
+
+        <div class="row g-3">
+            <div class="col-md-4">
+                @Html.LabelFor(m => m.ProjectID)
+                @Html.DropDownListFor(m => m.ProjectID, ViewBag.Projects as SelectList, "Select Project", new { @class = "form-control", id = "projectSelect" })
+            </div>
+            <div class="col-md-4">
+                @Html.LabelFor(m => m.CustomerID)
+                @Html.DropDownListFor(m => m.CustomerID, ViewBag.Customers as SelectList, "Select Customer", new { @class = "form-control" })
+            </div>
+            <div class="col-md-4">
+                @Html.LabelFor(m => m.ReferenceNo)
+                @Html.TextBoxFor(m => m.ReferenceNo, new { @class = "form-control" })
+            </div>
+            <div class="col-md-4">
+                @Html.LabelFor(m => m.MarkTo)
+                @Html.TextBoxFor(m => m.MarkTo, new { @class = "form-control" })
+            </div>
+            <div class="col-md-4">
+                @Html.LabelFor(m => m.Subject)
+                @Html.TextBoxFor(m => m.Subject, new { @class = "form-control" })
+            </div>
+            <div class="col-md-4">
+                @Html.LabelFor(m => m.Reference)
+                @Html.TextBoxFor(m => m.Reference, new { @class = "form-control" })
+            </div>
+            <div class="col-md-4">
+                @Html.LabelFor(m => m.SOEERaiseDate, "SOEE Raised Date")
+                @Html.TextBoxFor(m => m.SOEERaiseDate, "{0:yyyy-MM-dd}", new { @class = "form-control", type = "date" })
+            </div>
+            <div class="col-md-8">
+                @Html.LabelFor(m => m.Content)
+                @Html.TextAreaFor(m => m.Content, 3, 20, new { @class = "form-control" })
+            </div>
+        </div>
+    </div>
+
+    <div class="card card-body shadow-sm mb-3">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <h4 class="mb-0">Service Entry Items</h4>
+            <button type="button" id="addRow" class="btn btn-primary">Add Service Item</button>
+        </div>
+
+        <div class="table-responsive">
+            <table class="table table-bordered">
+                <thead>
+                    <tr>
+                        <th>Description of Work</th>
+                        <th>Service Type</th>
+                        <th>Unit</th>
+                        <th>Quantity</th>
+                        <th>Unit Price</th>
+                        <th>Subtotal</th>
+                        <th>Service Charge</th>
+                        <th>CGST</th>
+                        <th>SGST</th>
+                        <th>Total</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody id="serviceBody">
+                    @for (var i = 0; i < Model.Items.Count; i++)
+                    {
+                        <tr>
+                            @Html.HiddenFor(m => m.Items[i].SOEEItemID)
+                            @Html.HiddenFor(m => m.Items[i].IsDeleted, new { @class = "isDeleted" })
+                            <td>@Html.TextBoxFor(m => m.Items[i].DescriptionOfWork, new { @class = "form-control description" })</td>
+                            <td>
+                                <select name="Items[@i].ServiceTypeID" class="form-control serviceTypeDropdown">
+                                    @foreach (var service in serviceTypes)
+                                    {
+                                        <option value="@service.ServiceTypeID" @(service.ServiceTypeID == Model.Items[i].ServiceTypeID ? "selected" : "")>@service.ServiceName</option>
+                                    }
+                                </select>
+                            </td>
+                            <td>@Html.TextBoxFor(m => m.Items[i].Unit, new { @class = "form-control unit", type = "number", step = "0.01" })</td>
+                            <td>@Html.TextBoxFor(m => m.Items[i].Quantity, new { @class = "form-control qty", type = "number", step = "0.01" })</td>
+                            <td>@Html.TextBoxFor(m => m.Items[i].UnitPrice, new { @class = "form-control unitPrice", type = "number", step = "0.01" })</td>
+                            <td>@Html.TextBoxFor(m => m.Items[i].SubTotal, new { @class = "form-control subTotal", @readonly = "readonly" })</td>
+                            <td>@Html.TextBoxFor(m => m.Items[i].ServiceCharge, new { @class = "form-control serviceCharge", @readonly = "readonly" })</td>
+                            <td>@Html.TextBoxFor(m => m.Items[i].CGST, new { @class = "form-control cgst", @readonly = "readonly" })</td>
+                            <td>@Html.TextBoxFor(m => m.Items[i].SGST, new { @class = "form-control sgst", @readonly = "readonly" })</td>
+                            <td>@Html.TextBoxFor(m => m.Items[i].Total, new { @class = "form-control total", @readonly = "readonly" })</td>
+                            <td><button type="button" class="btn btn-outline-danger removeRow">X</button></td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="card card-body shadow-sm mb-3">
+        <div class="row g-3">
+            <div class="col-md-3">
+                <label>Total Basic</label>
+                <input type="text" id="TotalBasicAmount" class="form-control" readonly value="@Model.TotalBasicAmount.ToString("0.00")" />
+            </div>
+            <div class="col-md-3">
+                <label>Total Service Charges</label>
+                <input type="text" id="TotalServiceCharge" class="form-control" readonly value="@Model.TotalServiceCharge.ToString("0.00")" />
+            </div>
+            <div class="col-md-3">
+                <label>Total Tax</label>
+                <input type="text" id="TotalTaxAmount" class="form-control" readonly value="@Model.TotalTaxAmount.ToString("0.00")" />
+            </div>
+            <div class="col-md-3">
+                <label>Grand Total</label>
+                <input type="text" id="GrandTotal" class="form-control" readonly value="@Model.GrandTotal.ToString("0.00")" />
+            </div>
+        </div>
+    </div>
+
+    <div class="d-flex gap-2">
+        <button type="submit" class="btn btn-success">Save Draft</button>
+        <a href="@Url.Action("Details", new { id = Model.SOEEID })" class="btn btn-outline-secondary">Cancel</a>
+    </div>
+}
+
+@section Scripts {
+    <script>
+        var rowIndex = @Model.Items.Count;
+
+        function getServiceOptions(selectedId) {
+            var html = '<option value="">Select</option>';
+            @foreach (var s in serviceTypes)
+            {
+                @:html += '<option value="@s.ServiceTypeID">@s.ServiceName</option>';
+            }
+            return html.replace('value="' + selectedId + '"', 'value="' + selectedId + '" selected="selected"');
+        }
+
+        function buildRow() {
+            var row = '<tr>' +
+                '<input type="hidden" name="Items[' + rowIndex + '].SOEEItemID" value="0" />' +
+                '<input type="hidden" name="Items[' + rowIndex + '].IsDeleted" class="isDeleted" value="false" />' +
+                '<td><input type="text" name="Items[' + rowIndex + '].DescriptionOfWork" class="form-control description" required /></td>' +
+                '<td><select name="Items[' + rowIndex + '].ServiceTypeID" class="form-control serviceTypeDropdown">' + getServiceOptions('') + '</select></td>' +
+                '<td><input type="number" step="0.01" name="Items[' + rowIndex + '].Unit" class="form-control unit" /></td>' +
+                '<td><input type="number" step="0.01" name="Items[' + rowIndex + '].Quantity" class="form-control qty" /></td>' +
+                '<td><input type="number" step="0.01" name="Items[' + rowIndex + '].UnitPrice" class="form-control unitPrice" /></td>' +
+                '<td><input type="text" name="Items[' + rowIndex + '].SubTotal" class="form-control subTotal" readonly /></td>' +
+                '<td><input type="text" name="Items[' + rowIndex + '].ServiceCharge" class="form-control serviceCharge" readonly /></td>' +
+                '<td><input type="text" name="Items[' + rowIndex + '].CGST" class="form-control cgst" readonly /></td>' +
+                '<td><input type="text" name="Items[' + rowIndex + '].SGST" class="form-control sgst" readonly /></td>' +
+                '<td><input type="text" name="Items[' + rowIndex + '].Total" class="form-control total" readonly /></td>' +
+                '<td><button type="button" class="btn btn-outline-danger removeRow">X</button></td>' +
+                '</tr>';
+
+            rowIndex += 1;
+            return row;
+        }
+
+        function updateTotals() {
+            var basic = 0;
+            var service = 0;
+            var tax = 0;
+            var total = 0;
+
+            $('#serviceBody tr').each(function () {
+                if ($(this).find('.isDeleted').val() === 'true' || $(this).is(':hidden')) {
+                    return;
+                }
+
+                basic += parseFloat($(this).find('.subTotal').val()) || 0;
+                service += parseFloat($(this).find('.serviceCharge').val()) || 0;
+                tax += (parseFloat($(this).find('.cgst').val()) || 0) + (parseFloat($(this).find('.sgst').val()) || 0);
+                total += parseFloat($(this).find('.total').val()) || 0;
+            });
+
+            $('#TotalBasicAmount').val(basic.toFixed(2));
+            $('#TotalServiceCharge').val(service.toFixed(2));
+            $('#TotalTaxAmount').val(tax.toFixed(2));
+            $('#GrandTotal').val(total.toFixed(2));
+        }
+
+        function calculateRow(row) {
+            var unit = parseFloat(row.find('.unit').val()) || 0;
+            var qty = parseFloat(row.find('.qty').val()) || 0;
+            var unitPrice = parseFloat(row.find('.unitPrice').val()) || 0;
+            var subtotal = unit * qty * unitPrice;
+            row.find('.subTotal').val(subtotal.toFixed(2));
+
+            var serviceTypeId = row.find('.serviceTypeDropdown').val();
+            var projectId = $('#projectSelect').val();
+            var soeeId = '@Model.SOEEID';
+
+            if (!serviceTypeId || !projectId || subtotal <= 0) {
+                row.find('.serviceCharge, .cgst, .sgst, .total').val('');
+                updateTotals();
+                return;
+            }
+
+            $.post('@Url.Action("GetServiceChargePercent", "SOEE")', {
+                serviceTypeId: serviceTypeId,
+                subtotal: subtotal,
+                projectId: projectId,
+                soeeId: soeeId
+            }).done(function (data) {
+                var percent = data.percentage || 0;
+                var serviceCharge = subtotal * percent / 100;
+                var taxable = subtotal + serviceCharge;
+                var cgst = taxable * 0.09;
+                var sgst = taxable * 0.09;
+                var total = taxable + cgst + sgst;
+
+                row.find('.serviceCharge').val(serviceCharge.toFixed(2));
+                row.find('.cgst').val(cgst.toFixed(2));
+                row.find('.sgst').val(sgst.toFixed(2));
+                row.find('.total').val(total.toFixed(2));
+                updateTotals();
+            });
+        }
+
+        $(document).on('input change', '.unit, .qty, .unitPrice, .serviceTypeDropdown', function () {
+            calculateRow($(this).closest('tr'));
+        });
+
+        $('#addRow').on('click', function () {
+            $('#serviceBody').append(buildRow());
+        });
+
+        $(document).on('click', '.removeRow', function () {
+            var row = $(this).closest('tr');
+            row.find('.isDeleted').val('true');
+            row.hide();
+            updateTotals();
+        });
+
+        $('#projectSelect').on('change', function () {
+            var pid = $(this).val();
+            $.getJSON('@Url.Action("GetServicesForProject", "SOEE")', { projectId: pid }, function (data) {
+                $('.serviceTypeDropdown').each(function () {
+                    var ddl = $(this);
+                    var current = ddl.val();
+                    ddl.empty().append('<option value="">Select</option>');
+                    $.each(data, function (_, item) {
+                        ddl.append($('<option/>', { value: item.ServiceTypeID, text: item.ServiceName }));
+                    });
+                    ddl.val(current);
+                });
+            });
+        });
+
+        $(function () {
+            $('#serviceBody tr').each(function () {
+                calculateRow($(this));
+            });
+        });
+    </script>
+}

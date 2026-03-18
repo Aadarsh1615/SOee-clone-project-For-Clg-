@@ -1,0 +1,20 @@
+﻿@{
+    ViewBag.Title = "SOEE Portal";
+}
+<div class="container mt-5">
+    <div class="row justify-content-center align-items-center" style="min-height:70vh;">
+        <div class="col-lg-6">
+            <div class="card shadow-sm border-0 p-4">
+                <div class="card-body text-center">
+                    <h1 class="display-4 mb-2 text-dark">FinTrack</h1>
+                    <p class="fs-5 text-muted mb-3">Your modern government finance service workflow portal.</p>
+                    <p class="fw-semibold mb-4 text-secondary">Sign in to continue or register a new account.</p>
+                    <div class="d-grid gap-2">
+                        <a class="btn btn-primary btn-lg" href="@Url.Action("Login", "Account")">Login</a>
+                        <a class="btn btn-outline-primary btn-lg" href="@Url.Action("Register", "Account")">Register</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,41 @@
+@model IEnumerable<SOEEApp.Models.Customer>
+
+<div class="row mb-4 align-items-center">
+    <div class="col">
+        <h2 class="mb-0">Customers</h2>
+    </div>
+    <div class="col-auto">
+        @Html.ActionLink("Add New Customer", "Create", null, new { @class = "btn btn-primary" })
+    </div>
+</div>
+
+<div class="card shadow-sm">
+    <div class="table-responsive">
+        <table class="table table-hover align-middle mb-0">
+            <thead class="table-light">
+                <tr>
+                    <th>Customer</th>
+                    <th>Email</th>
+                    <th>Contact Person</th>
+                    <th>Phone</th>
+                    <th class="text-end">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td>@item.CustomerName</td>
+                        <td>@item.Email</td>
+                        <td>@item.ContactPerson</td>
+                        <td>@item.PhoneNumber</td>
+                        <td class="text-end">
+                            @Html.ActionLink("Edit", "Edit", new { id = item.CustomerID }, new { @class = "btn btn-sm btn-outline-primary me-1" })
+                            @Html.ActionLink("Delete", "Delete", new { id = item.CustomerID }, new { @class = "btn btn-sm btn-outline-danger" })
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

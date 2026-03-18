@@ -1,0 +1,45 @@
+﻿@model SOEEApp.Models.ServiceCostSlab
+
+@{
+    ViewBag.Title = "Create Slab";
+}
+
+<div class="row justify-content-center mt-5">
+    <div class="col-md-6 col-lg-5">
+        <div class="card shadow-sm border-0">
+            <div class="card-header bg-white">
+                <h4 class="mb-0 text-primary">Create New Slab</h4>
+            </div>
+            <div class="card-body p-4">
+                @using (Html.BeginForm())
+                {
+                    @Html.AntiForgeryToken()
+                    @Html.ValidationSummary(true, "", new { @class = "text-danger alert alert-danger" })
+
+                    <div class="mb-3">
+                        @Html.LabelFor(m => m.MinAmount, new { @class = "form-label" })
+                        @Html.TextBoxFor(m => m.MinAmount, new { @class = "form-control", placeholder = "0.00" })
+                        @Html.ValidationMessageFor(m => m.MinAmount, "", new { @class = "text-danger small" })
+                    </div>
+
+                    <div class="mb-3">
+                        @Html.LabelFor(m => m.MaxAmount, new { @class = "form-label" })
+                        @Html.TextBoxFor(m => m.MaxAmount, new { @class = "form-control", placeholder = "Leave blank for unlimited" })
+                        @Html.ValidationMessageFor(m => m.MaxAmount, "", new { @class = "text-danger small" })
+                    </div>
+
+                    @Html.HiddenFor(m => m.IsActive)
+
+                    <div class="d-grid gap-2 mt-4">
+                        <input type="submit" value="Create Slab" class="btn btn-primary" />
+                        @Html.ActionLink("Cancel", "Index", null, new { @class = "btn btn-light text-secondary" })
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+}

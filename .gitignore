@@ -1,0 +1,18 @@
+# Visual Studio build output
+bin/
+obj/
+SOEEApp/bin/
+SOEEApp/obj/
+
+# User-specific files
+*.user
+*.suo
+*.vs/
+
+# Visual Studio Code settings
+.vscode/
+
+# Others
+*.log
+*.pdb
+*.exe

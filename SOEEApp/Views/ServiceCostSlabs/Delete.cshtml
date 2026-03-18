@@ -1,0 +1,42 @@
+@model SOEEApp.Models.ServiceCostSlab
+
+@{
+    ViewBag.Title = "Delete Slab";
+}
+
+<div class="row justify-content-center mt-5">
+    <div class="col-md-6">
+        <div class="card shadow-sm border-0">
+            <div class="card-header bg-danger text-white">
+                <h4 class="mb-0">Delete Slab</h4>
+            </div>
+            <div class="card-body">
+                <h5 class="card-title text-center mb-4">Are you sure you want to delete this slab?</h5>
+                
+                <dl class="row">
+                    <dt class="col-sm-4">
+                        @Html.DisplayNameFor(model => model.MinAmount)
+                    </dt>
+                    <dd class="col-sm-8">
+                        @Html.DisplayFor(model => model.MinAmount)
+                    </dd>
+
+                    <dt class="col-sm-4">
+                        @Html.DisplayNameFor(model => model.MaxAmount)
+                    </dt>
+                    <dd class="col-sm-8">
+                        @Html.DisplayFor(model => model.MaxAmount)
+                    </dd>
+                </dl>
+
+                @using (Html.BeginForm()) {
+                    @Html.AntiForgeryToken()
+                    <div class="d-grid gap-2 d-md-flex justify-content-md-center mt-4">
+                        <input type="submit" value="Delete" class="btn btn-danger px-4" />
+                        @Html.ActionLink("Cancel", "Index", null, new { @class = "btn btn-secondary px-4" })
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>

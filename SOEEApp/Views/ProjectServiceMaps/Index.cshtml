@@ -1,0 +1,31 @@
+﻿@model IEnumerable<SOEEApp.Models.ProjectServiceMap>
+@{
+    ViewBag.Title = "Project-Service Mapping";
+}
+
+<h2>Project-Service Mapping</h2>
+<p>
+    @Html.ActionLink("Create New Mapping", "Create", "ProjectServiceMaps", null, new { @class = "btn btn-primary" })
+</p>
+
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>Project</th>
+            <th>Service Type</th>
+            <th>Date</th>
+            <th>Is Active</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@item.Project.Name</td>
+                <td>@item.ServiceType.ServiceName</td>
+                <td>@item.AddedOn.ToShortDateString()</td>
+                <td>@item.IsActive</td>
+            </tr>
+        }
+    </tbody>
+</table>
